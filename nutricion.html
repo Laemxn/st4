@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrición Personalizada - Smart Trainer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/nutricion.css">
+</head>
+<body>
+    <!-- Header y Navegación -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">ST</div>
+                <div class="logo-text">Smart<span>Trainer</span></div>
+            </div>
+            <div class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="entrenamientos.html"><i class="fas fa-dumbbell"></i> Entrenamientos</a></li>
+                    <li><a href="nutricion.html"><i class="fas fa-apple-alt"></i> Nutrición</a></li>
+                    <li><a href="progreso.html"><i class="fas fa-chart-line"></i> Progreso</a></li>
+                    <li><a href="comunidad.html"><i class="fas fa-users"></i> Comunidad</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Nutrición <span>Inteligente</span></h1>
+        <p>Obtén un plan de alimentación 100% personalizado generado por IA según tus características y objetivos específicos</p>
+    </section>
+
+    <!-- Form Section -->
+    <section class="form-section">
+        <div class="container">
+            <h2 class="section-title">Genera Tu Dieta Personalizada</h2>
+            <div class="form-container">
+                <form id="dietForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="peso">Peso (kg)</label>
+                            <input type="number" id="peso" class="form-control" min="30" max="200" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="estatura">Estatura (cm)</label>
+                            <input type="number" id="estatura" class="form-control" min="100" max="250" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edad">Edad</label>
+                            <input type="number" id="edad" class="form-control" min="15" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Género</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="masculino" name="genero" value="masculino" required>
+                                    <label for="masculino">Masculino</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="femenino" name="genero" value="femenino">
+                                    <label for="femenino">Femenino</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="objetivo">Objetivo Principal</label>
+                        <select id="objetivo" class="select-control" required>
+                            <option value="">Selecciona tu objetivo</option>
+                            <option value="perder_peso">Perder peso</option>
+                            <option value="ganar_masa_muscular">Ganar masa muscular</option>
+                            <option value="mantener_peso">Mantener peso</option>
+                            <option value="definicion_muscular">Definición muscular</option>
+                            <option value="mejorar_salud">Mejorar salud general</option>
+                            <option value="aumentar_energia">Aumentar energía</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="actividad">Nivel de Actividad Física</label>
+                        <select id="actividad" class="select-control" required>
+                            <option value="">Selecciona tu nivel</option>
+                            <option value="sedentario">Sedentario (poco o ningún ejercicio)</option>
+                            <option value="ligero">Ligero (ejercicio 1-3 días/semana)</option>
+                            <option value="moderado">Moderado (ejercicio 3-5 días/semana)</option>
+                            <option value="activo">Activo (ejercicio 6-7 días/semana)</option>
+                            <option value="muy_activo">Muy activo (ejercicio intenso diario)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="preferencias">Preferencias Alimenticias (opcional)</label>
+                        <textarea id="preferencias" class="form-control" rows="3" placeholder="Ej: Vegetariano, sin mariscos, alergia a lactosa..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" id="generateBtn">
+                        Generar Mi Dieta Personalizada
+                    </button>
+                </form>
+                
+                <div class="loading" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <p>La IA está generando tu dieta personalizada...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section" id="resultsSection">
+        <div class="container">
+            <h2 class="section-title">Tu Plan de Nutrición Personalizado</h2>
+            <div class="results-container">
+                <div class="diet-plan" id="dietPlan">
+                    <!-- La dieta generada por IA aparecerá aquí -->
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-secondary" id="downloadPdfBtn">
+                        <i class="fas fa-download"></i> Descargar PDF
+                    </button>
+                    <button class="btn-secondary" id="newDietBtn">
+                        <i class="fas fa-redo"></i> Generar Nueva Dieta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Smart<span>Trainer</span></div>
+            <p class="footer-text">Nutrición 100% personalizada mediante inteligencia artificial. Obtén dietas adaptadas específicamente a tu cuerpo y objetivos.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p class="copyright">© 2023 Smart Trainer. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/nutricion.js"></script>
+</body>
+</html>

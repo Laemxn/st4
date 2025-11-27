@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progreso - Smart Trainer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/progreso.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">ST</div>
+                <div class="logo-text">Smart<span>Trainer</span></div>
+            </div>
+            <div class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="entrenamientos.html"><i class="fas fa-dumbbell"></i> Entrenamientos</a></li>
+                    <li><a href="nutricion.html"><i class="fas fa-apple-alt"></i> Nutrición</a></li>
+                    <li><a href="progreso.html"><i class="fas fa-chart-line"></i> Progreso</a></li>
+                    <li><a href="comunidad.html"><i class="fas fa-users"></i> Comunidad</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Tu <span>Progreso</span></h1>
+        <p>Sigue tu evolución y alcanza tus metas fitness</p>
+    </section>
+
+    <!-- Resumen de Progreso -->
+    <section class="progress-overview">
+        <div class="container">
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <div class="overview-icon">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <div class="overview-content">
+                        <h3>Sesiones Completadas</h3>
+                        <div class="overview-value" id="totalSessions">0</div>
+                        <div class="overview-trend" id="sessionsTrend">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>0% esta semana</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overview-card">
+                    <div class="overview-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div class="overview-content">
+                        <h3>Calorías Quemadas</h3>
+                        <div class="overview-value" id="totalCalories">0</div>
+                        <div class="overview-trend" id="caloriesTrend">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>0% esta semana</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overview-card">
+                    <div class="overview-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="overview-content">
+                        <h3>Tiempo Entrenado</h3>
+                        <div class="overview-value" id="totalTime">0h 0m</div>
+                        <div class="overview-trend" id="timeTrend">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>0% esta semana</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overview-card">
+                    <div class="overview-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="overview-content">
+                        <h3>Racha Actual</h3>
+                        <div class="overview-value" id="currentStreak">0 días</div>
+                        <div class="overview-trend" id="streakTrend">
+                            <i class="fas fa-clock"></i>
+                            <span>Comienza tu racha</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gráficas de Progreso -->
+    <section class="progress-charts">
+        <div class="container">
+            <h2 class="section-title">Tu Evolución</h2>
+            
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Progreso Semanal</h3>
+                        <select id="weekSelector" class="chart-selector">
+                            <option value="current">Esta Semana</option>
+                            <option value="last">Semana Pasada</option>
+                            <option value="2weeks">Hace 2 Semanas</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="weeklyProgressChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Distribución de Entrenamientos</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="workoutDistributionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card full-width">
+                    <div class="chart-header">
+                        <h3>Progreso Mensual</h3>
+                        <select id="monthSelector" class="chart-selector">
+                            <option value="current">Este Mes</option>
+                            <option value="last">Mes Pasado</option>
+                            <option value="2months">Hace 2 Meses</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="monthlyProgressChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Estadísticas Detalladas -->
+    <section class="detailed-stats">
+        <div class="container">
+            <h2 class="section-title">Estadísticas Detalladas</h2>
+            
+            <div class="stats-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-button active" data-tab="exercises">Ejercicios</button>
+                    <button class="tab-button" data-tab="muscles">Grupos Musculares</button>
+                    <button class="tab-button" data-tab="performance">Rendimiento</button>
+                </div>
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="exercises-tab">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <h4>Ejercicio Más Realizado</h4>
+                                <div class="stat-value" id="mostPerformedExercise">-</div>
+                                <div class="stat-detail" id="mostPerformedCount">0 veces</div>
+                            </div>
+                            <div class="stat-item">
+                                <h4>Mejor Progreso</h4>
+                                <div class="stat-value" id="bestProgressExercise">-</div>
+                                <div class="stat-detail" id="bestProgressAmount">+0%</div>
+                            </div>
+                            <div class="stat-item">
+                                <h4>Total de Ejercicios</h4>
+                                <div class="stat-value" id="totalExercises">0</div>
+                                <div class="stat-detail">únicos realizados</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="muscles-tab">
+                        <div class="muscle-stats">
+                            <div class="muscle-group">
+                                <h4>Parte Superior</h4>
+                                <div class="muscle-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="upperBodyProgress" style="width: 0%"></div>
+                                    </div>
+                                    <span class="progress-text" id="upperBodyPercent">0%</span>
+                                </div>
+                            </div>
+                            <div class="muscle-group">
+                                <h4>Parte Inferior</h4>
+                                <div class="muscle-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="lowerBodyProgress" style="width: 0%"></div>
+                                    </div>
+                                    <span class="progress-text" id="lowerBodyPercent">0%</span>
+                                </div>
+                            </div>
+                            <div class="muscle-group">
+                                <h4>Núcleo</h4>
+                                <div class="muscle-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="coreProgress" style="width: 0%"></div>
+                                    </div>
+                                    <span class="progress-text" id="corePercent">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="performance-tab">
+                        <div class="performance-stats">
+                            <div class="performance-item">
+                                <div class="performance-icon">
+                                    <i class="fas fa-weight"></i>
+                                </div>
+                                <div class="performance-info">
+                                    <h4>Peso Promedio</h4>
+                                    <div class="performance-value" id="avgWeight">0 kg</div>
+                                    <div class="performance-change" id="weightChange">+0%</div>
+                                </div>
+                            </div>
+                            <div class="performance-item">
+                                <div class="performance-icon">
+                                    <i class="fas fa-redo"></i>
+                                </div>
+                                <div class="performance-info">
+                                    <h4>Repeticiones Promedio</h4>
+                                    <div class="performance-value" id="avgReps">0</div>
+                                    <div class="performance-change" id="repsChange">+0%</div>
+                                </div>
+                            </div>
+                            <div class="performance-item">
+                                <div class="performance-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div class="performance-info">
+                                    <h4>Intensidad</h4>
+                                    <div class="performance-value" id="avgIntensity">0%</div>
+                                    <div class="performance-change" id="intensityChange">+0%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Logros y Metas -->
+    <section class="achievements">
+        <div class="container">
+            <h2 class="section-title">Logros y Metas</h2>
+            
+            <div class="achievements-grid">
+                <div class="achievement-card">
+                    <div class="achievement-icon completed">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <h4>Primer Entrenamiento</h4>
+                    <p>Completa tu primera sesión</p>
+                    <div class="achievement-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                        <span>Completado</span>
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon in-progress">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h4>Racha de 7 Días</h4>
+                    <p>Entrena 7 días seguidos</p>
+                    <div class="achievement-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="streak7Progress" style="width: 0%"></div>
+                        </div>
+                        <span id="streak7Text">0/7 días</span>
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon locked">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <h4>Fuerza Avanzada</h4>
+                    <p>Levanta +50kg en press banca</p>
+                    <div class="achievement-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span>Bloqueado</span>
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon in-progress">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h4>Maratón Mensual</h4>
+                    <p>20 horas de entrenamiento</p>
+                    <div class="achievement-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="monthlyHoursProgress" style="width: 0%"></div>
+                        </div>
+                        <span id="monthlyHoursText">0/20 horas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Smart<span>Trainer</span></div>
+            <p class="footer-text">Sigue tu progreso y alcanza tus metas fitness con datos reales.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p class="copyright">© 2023 Smart Trainer. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/progreso.js"></script>
+</body>
+</html>

@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escaner QR - Smart Trainer</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --negro: #121212;
+            --gris-oscuro: #1e1e1e;
+            --gris-medio: #2d2d2d;
+            --gris-claro: #3d3d3d;
+            --amarillo: #ffcc00;
+            --amarillo-oscuro: #e6b800;
+            --blanco: #f5f5f5;
+            --verde: #00cc66;
+            --rojo: #ff4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--negro) 0%, var(--gris-oscuro) 100%);
+            color: var(--blanco);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header y Navegación */
+        header {
+            background-color: var(--gris-oscuro);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            background-color: var(--amarillo);
+            color: var(--negro);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--blanco);
+        }
+
+        .logo-text span {
+            color: var(--amarillo);
+        }
+
+        .hamburger-menu {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            width: 30px;
+            height: 25px;
+            justify-content: space-between;
+            z-index: 1001;
+        }
+
+        .hamburger-menu span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: var(--blanco);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
+        }
+
+        .nav-menu {
+            position: fixed;
+            top: 80px;
+            right: -100%;
+            width: 300px;
+            height: calc(100vh - 80px);
+            background-color: var(--gris-oscuro);
+            transition: right 0.5s ease;
+            padding: 2rem;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+            z-index: 999;
+        }
+
+        .nav-menu.active {
+            right: 0;
+        }
+
+        .nav-menu ul {
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-menu a {
+            color: var(--blanco);
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            background-color: var(--gris-medio);
+            color: var(--amarillo);
+        }
+
+        .nav-menu a i {
+            font-size: 1.2rem;
+            width: 25px;
+        }
+
+        /* Sistema de pestañas */
+        .tabs-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: var(--gris-oscuro);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .tabs-header {
+            display: flex;
+            background: var(--gris-medio);
+            border-bottom: 1px solid var(--gris-claro);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1.5rem 2rem;
+            background: transparent;
+            border: none;
+            color: var(--blanco);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: var(--amarillo);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .tab-btn.active {
+            color: var(--amarillo);
+            background: rgba(255, 204, 0, 0.05);
+        }
+
+        .tab-btn.active::before {
+            width: 100%;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--amarillo);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 3rem;
+            animation: tab-fade 0.5s ease;
+        }
+
+        @keyframes tab-fade {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Contenido principal */
+        .scanner-container {
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .scanner-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--amarillo), #ffdd44);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: title-shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes title-shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .scanner-subtitle {
+            font-size: 1.3rem;
+            color: #ccc;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* Mensajes de estado */
+        .status-message {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin: 1rem auto;
+            max-width: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .status-error {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid var(--rojo);
+            color: var(--rojo);
+        }
+
+        .status-warning {
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid var(--amarillo);
+            color: var(--amarillo);
+        }
+
+        .status-success {
+            background: rgba(0, 204, 102, 0.1);
+            border: 1px solid var(--verde);
+            color: var(--verde);
+        }
+
+        /* Área del scanner con efectos */
+        .scanner-wrapper {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 
+                0 0 0 1px rgba(255, 204, 0, 0.1),
+                0 20px 50px rgba(0, 0, 0, 0.5),
+                0 0 100px rgba(255, 204, 0, 0.1);
+            transform: perspective(1000px) rotateX(5deg);
+            transition: all 0.5s ease;
+            background: var(--gris-medio);
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scanner-wrapper:hover {
+            transform: perspective(1000px) rotateX(0deg);
+            box-shadow: 
+                0 0 0 1px rgba(255, 204, 0, 0.2),
+                0 25px 60px rgba(0, 0, 0, 0.6),
+                0 0 120px rgba(255, 204, 0, 0.2);
+        }
+
+        #video {
+            width: 100%;
+            display: block;
+            filter: brightness(1.1) contrast(1.1);
+        }
+
+        .scanner-placeholder {
+            text-align: center;
+            color: #aaa;
+        }
+
+        .scanner-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--gris-claro);
+        }
+
+        /* Línea de escaneo animada */
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--amarillo), transparent);
+            animation: scan-animation 2s linear infinite;
+            box-shadow: 0 0 10px var(--amarillo);
+        }
+
+        @keyframes scan-animation {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        /* Marco del scanner con esquinas animadas */
+        .scanner-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--amarillo);
+        }
+
+        .corner-tl {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+            animation: corner-pulse 2s infinite;
+        }
+
+        .corner-tr {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+            animation: corner-pulse 2s infinite 0.5s;
+        }
+
+        .corner-bl {
+            bottom: 20px;
+            left: 20px;
+            border-right: none;
+            border-top: none;
+            animation: corner-pulse 2s infinite 1s;
+        }
+
+        .corner-br {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+            animation: corner-pulse 2s infinite 1.5s;
+        }
+
+        @keyframes corner-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Input manual innovador */
+        .manual-input-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1.5rem 2rem;
+            font-size: 1.1rem;
+            background: var(--gris-medio);
+            border: 2px solid var(--gris-claro);
+            border-radius: 15px;
+            color: var(--blanco);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--amarillo);
+            box-shadow: 0 5px 20px rgba(255, 204, 0, 0.3);
+            background: var(--gris-oscuro);
+        }
+
+        .input-label {
+            position: absolute;
+            top: 50%;
+            left: 2rem;
+            transform: translateY(-50%);
+            color: #aaa;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            background: var(--gris-medio);
+            padding: 0 0.5rem;
+        }
+
+        .input-field:focus + .input-label,
+        .input-field:not(:placeholder-shown) + .input-label {
+            top: 0;
+            font-size: 0.9rem;
+            color: var(--amarillo);
+            background: var(--gris-oscuro);
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--amarillo);
+            font-size: 1.2rem;
+        }
+
+        /* Botón de envío con efecto */
+        .submit-btn {
+            background: linear-gradient(135deg, var(--amarillo), var(--amarillo-oscuro));
+            color: var(--negro);
+            border: none;
+            padding: 1.2rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 auto;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Resultado con estilo */
+        .result-container {
+            background: linear-gradient(135deg, var(--gris-medio), var(--gris-oscuro));
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem auto;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 204, 0, 0.1);
+            display: none;
+            animation: result-appear 0.5s ease-out;
+        }
+
+        @keyframes result-appear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-title {
+            color: var(--amarillo);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .result-link {
+            display: inline-block;
+            background: var(--gris-claro);
+            color: var(--blanco);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            word-break: break-all;
+            margin: 0.5rem 0;
+        }
+
+        .result-link:hover {
+            background: var(--amarillo);
+            color: var(--negro);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 204, 0, 0.3);
+            border-color: var(--amarillo);
+        }
+
+        .video-preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 204, 0, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid var(--amarillo);
+        }
+
+        /* Botones con estilo */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--amarillo);
+            color: var(--negro);
+            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--amarillo-oscuro);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--blanco);
+            border: 2px solid var(--gris-claro);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--amarillo);
+            color: var(--amarillo);
+            transform: translateY(-3px);
+        }
+
+        /* Instrucciones */
+        .instructions {
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid rgba(255, 204, 0, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+
+        .instructions h3 {
+            color: var(--amarillo);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .instructions-list {
+            list-style: none;
+            text-align: left;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .instructions-list li {
+            margin-bottom: 0.8rem;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .instructions-list li:before {
+            content: "•";
+            color: var(--amarillo);
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -5px;
+        }
+
+        /* Efectos de partículas de fondo */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--amarillo);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--gris-oscuro);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--gris-medio);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo span {
+            color: var(--amarillo);
+        }
+
+        .footer-text {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+            color: #aaa;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-icons a {
+            color: var(--blanco);
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--amarillo);
+            transform: translateY(-5px);
+        }
+
+        .copyright {
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .scanner-title {
+                font-size: 2.2rem;
+            }
+            
+            .scanner-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .scanner-wrapper {
+                transform: none;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+            
+            .tabs-header {
+                flex-direction: column;
+            }
+            
+            .tab-content {
+                padding: 2rem 1.5rem;
+            }
+
+            .nav-menu {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas de fondo -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">ST</div>
+                <div class="logo-text">Smart<span>Trainer</span></div>
+            </div>
+            <div class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="entrenamientos.html"><i class="fas fa-dumbbell"></i> Entrenamientos</a></li>
+                    <li><a href="nutricion.html"><i class="fas fa-apple-alt"></i> Nutrición</a></li>
+                    <li><a href="progreso.html"><i class="fas fa-chart-line"></i> Progreso</a></li>
+                    <li><a href="comunidad.html"><i class="fas fa-users"></i> Comunidad</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <div class="scanner-container">
+        <h1 class="scanner-title">Escaner de Entrenamiento</h1>
+        <p class="scanner-subtitle">Escanee códigos QR o ingréselos manualmente para acceder a videos exclusivos</p>
+        
+        <!-- Sistema de Pestañas -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="scanner">
+                    <i class="fas fa-camera"></i> Escáner Cámara
+                </button>
+                <button class="tab-btn" data-tab="manual">
+                    <i class="fas fa-keyboard"></i> Ingreso Manual
+                </button>
+            </div>
+            
+            <!-- Pestaña Escáner -->
+            <div class="tab-content active" id="scanner-tab">
+                <div class="scanner-wrapper" id="scannerWrapper">
+                    <video id="video" playsinline></video>
+                    <div class="scan-line" id="scanLine"></div>
+                    <div class="scanner-frame">
+                        <div class="corner corner-tl"></div>
+                        <div class="corner corner-tr"></div>
+                        <div class="corner corner-bl"></div>
+                        <div class="corner corner-br"></div>
+                    </div>
+                    <div class="scanner-placeholder" id="scannerPlaceholder">
+                        <i class="fas fa-camera"></i>
+                        <p>Iniciando cámara...</p>
+                    </div>
+                </div>
+                
+                <div class="status-message status-warning" id="cameraMessage">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Permite el acceso a la cámara cuando se solicite</span>
+                </div>
+                
+                <div class="instructions">
+                    <h3><i class="fas fa-info-circle"></i> Cómo usar el escáner</h3>
+                    <ul class="instructions-list">
+                        <li>Asegúrate de tener buena iluminación</li>
+                        <li>Mantén el código QR dentro del marco</li>
+                        <li>El escáner detectará automáticamente el código</li>
+                        <li>Haz clic en el enlace para ver tu video de entrenamiento</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Pestaña Manual -->
+            <div class="tab-content" id="manual-tab">
+                <div class="manual-input-container">
+                    <div class="input-group">
+                        <input type="text" class="input-field" id="manualCode" placeholder=" ">
+                        <label class="input-label">Ingresa el código del entrenamiento</label>
+                        <i class="fas fa-qrcode input-icon"></i>
+                    </div>
+                    
+                    <button class="submit-btn" id="submitManualCode">
+                        <i class="fas fa-play-circle"></i> Ver Video de Entrenamiento
+                    </button>
+                    
+                    <div class="instructions">
+                        <h3><i class="fas fa-lightbulb"></i> Códigos de ejemplo para probar</h3>
+                        <ul class="instructions-list">
+                            <li><strong>ABS001</strong> - Entrenamiento de Abdomen</li>
+                            <li><strong>CARDIO002</strong> - Rutina Cardio</li>
+                            <li><strong>FUERZA003</strong> - Entrenamiento de Fuerza</li>
+                            <li><strong>YOGA004</strong> - Sesión de Yoga</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resultado -->
+        <div class="result-container" id="resultContainer">
+            <h3 class="result-title"><i class="fas fa-play-circle"></i> Video de Entrenamiento Listo</h3>
+            <div class="video-preview">
+                <strong>Video:</strong> <span id="videoTitle">Cargando...</span><br>
+                <strong>Duración:</strong> <span id="videoDuration">-</span><br>
+                <strong>Dificultad:</strong> <span id="videoDifficulty">-</span>
+            </div>
+            <a href="#" class="result-link" id="resultLink" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Ver Video Completo
+            </a>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i> Volver al Inicio
+            </button>
+            <button class="btn btn-primary" onclick="toggleCamera()" id="toggleCameraBtn">
+                <i class="fas fa-camera"></i> Alternar Cámara
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Smart<span>Trainer</span></div>
+            <p class="footer-text">Escanea códigos QR para acceder a videos de entrenamiento exclusivos.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p class="copyright">© 2023 Smart Trainer. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Base de datos de videos para códigos manuales
+        const videoDatabase = {
+            'ABS001': {
+                title: 'Entrenamiento Intenso de Abdomen - Nivel Principiante',
+                duration: '15 minutos',
+                difficulty: 'Principiante',
+                url: 'https://www.youtube.com/watch?v=abcdefg123'
+            },
+            'CARDIO002': {
+                title: 'Rutina Cardio Quema Grasa - Nivel Intermedio',
+                duration: '25 minutos',
+                difficulty: 'Intermedio',
+                url: 'https://www.youtube.com/watch?v=hijklmn456'
+            },
+            'FUERZA003': {
+                title: 'Entrenamiento de Fuerza Total - Nivel Avanzado',
+                duration: '45 minutos',
+                difficulty: 'Avanzado',
+                url: 'https://www.youtube.com/watch?v=opqrst789'
+            },
+            'YOGA004': {
+                title: 'Yoga para Flexibilidad y Relajación',
+                duration: '30 minutos',
+                difficulty: 'Todos los niveles',
+                url: 'https://www.youtube.com/watch?v=uvwxyz012'
+            }
+        };
+
+        // Menú Hamburguesa
+        const hamburgerMenu = document.querySelector('.hamburger-menu');
+        const navMenu = document.querySelector('.nav-menu');
+
+        hamburgerMenu.addEventListener('click', () => {
+            hamburgerMenu.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Cerrar menú al hacer clic en un enlace
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburgerMenu.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Crear partículas de fondo
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (3 + Math.random() * 4) + 's';
+                particle.style.opacity = Math.random() * 0.5;
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Sistema de pestañas
+        function initTabs() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabId = btn.getAttribute('data-tab');
+                    
+                    // Remover activo de todos
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Activar actual
+                    btn.classList.add('active');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                    
+                    // Si cambia a escáner, reiniciar cámara
+                    if (tabId === 'scanner') {
+                        startCamera(currentFacingMode);
+                    } else {
+                        stopCamera();
+                    }
+                });
+            });
+        }
+
+        // Variables para el escáner
+        const video = document.getElementById("video");
+        const scannerWrapper = document.getElementById("scannerWrapper");
+        const scannerPlaceholder = document.getElementById("scannerPlaceholder");
+        const scanLine = document.getElementById("scanLine");
+        const cameraMessage = document.getElementById("cameraMessage");
+        const resultContainer = document.getElementById("resultContainer");
+        const resultLink = document.getElementById("resultLink");
+        const videoTitle = document.getElementById("videoTitle");
+        const videoDuration = document.getElementById("videoDuration");
+        const videoDifficulty = document.getElementById("videoDifficulty");
+        const manualCodeInput = document.getElementById("manualCode");
+        const submitManualBtn = document.getElementById("submitManualCode");
+        const toggleCameraBtn = document.getElementById("toggleCameraBtn");
+        
+        let stream = null;
+        let currentFacingMode = "environment";
+        let isCameraActive = false;
+
+        // Inicializar escáner
+        function initScanner() {
+            createParticles();
+            initTabs();
+            startCamera(currentFacingMode);
+        }
+
+        // Iniciar cámara con mejor manejo de errores
+        async function startCamera(facingMode) {
+            stopCamera();
+            
+            try {
+                // Ocultar placeholder y mostrar video
+                scannerPlaceholder.style.display = 'none';
+                video.style.display = 'block';
+                scanLine.style.display = 'block';
+                cameraMessage.className = 'status-message status-warning';
+                cameraMessage.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i><span>Iniciando cámara...</span>';
+                
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: facingMode,
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
+                
+                video.srcObject = stream;
+                await video.play();
+                
+                isCameraActive = true;
+                cameraMessage.className = 'status-message status-success';
+                cameraMessage.innerHTML = '<i class="fas fa-check-circle"></i><span>Cámara activa - Escaneando...</span>';
+                
+                requestAnimationFrame(tick);
+                
+            } catch (err) {
+                console.error("Error al acceder a la cámara: ", err);
+                handleCameraError(err);
+            }
+        }
+
+        // Manejar errores de cámara
+        function handleCameraError(error) {
+            isCameraActive = false;
+            scannerPlaceholder.style.display = 'flex';
+            video.style.display = 'none';
+            scanLine.style.display = 'none';
+            
+            let errorMessage = 'No se pudo acceder a la cámara. ';
+            
+            if (error.name === 'NotAllowedError') {
+                errorMessage += 'Permiso denegado. Por favor permite el acceso a la cámara en tu navegador.';
+            } else if (error.name === 'NotFoundError') {
+                errorMessage += 'No se encontró ninguna cámara disponible.';
+            } else if (error.name === 'NotSupportedError') {
+                errorMessage += 'Tu navegador no soporta acceso a la cámara.';
+            } else if (error.name === 'NotReadableError') {
+                errorMessage += 'La cámara está siendo usada por otra aplicación.';
+            } else {
+                errorMessage += 'Error desconocido: ' + error.message;
+            }
+            
+            cameraMessage.className = 'status-message status-error';
+            cameraMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i><span>${errorMessage}</span>`;
+        }
+
+        // Detener cámara
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            isCameraActive = false;
+        }
+
+        // Alternar entre cámaras
+        function toggleCamera() {
+            if (!isCameraActive) {
+                startCamera(currentFacingMode);
+                return;
+            }
+            
+            currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
+            startCamera(currentFacingMode);
+            
+            // Actualizar texto del botón
+            const icon = toggleCameraBtn.querySelector('i');
+            const text = toggleCameraBtn.querySelector('span') || document.createElement('span');
+            text.textContent = currentFacingMode === "environment" ? ' Cámara Trasera' : ' Cámara Frontal';
+            if (!toggleCameraBtn.contains(text)) {
+                toggleCameraBtn.appendChild(text);
+            }
+        }
+
+        // Función principal de escaneo
+        function tick() {
+            if (isCameraActive && video.readyState === video.HAVE_ENOUGH_DATA) {
+                const canvas = document.createElement("canvas");
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                
+                if (code) {
+                    processDetectedCode(code.data);
+                }
+            }
+            if (isCameraActive) {
+                requestAnimationFrame(tick);
+            }
+        }
+
+        // Procesar código detectado
+        function processDetectedCode(code) {
+            // Si es una URL de QR
+            if (code.startsWith('http')) {
+                showResult(code, 'Video de Entrenamiento', 'Duración variable', 'Todos los niveles');
+            } else {
+                // Si es un código manual
+                processManualCode(code);
+            }
+        }
+
+        // Mostrar resultado
+        function showResult(url, title = 'Video de Entrenamiento', duration = 'Duración variable', difficulty = 'Todos los niveles') {
+            resultContainer.style.display = "block";
+            resultLink.href = url;
+            videoTitle.textContent = title;
+            videoDuration.textContent = duration;
+            videoDifficulty.textContent = difficulty;
+            
+            // Efecto de éxito
+            resultContainer.style.animation = "none";
+            setTimeout(() => {
+                resultContainer.style.animation = "result-appear 0.5s ease-out";
+            }, 10);
+            
+            // Scroll suave al resultado
+            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Procesar código manual
+        function processManualCode(code) {
+            const cleanCode = code.trim().toUpperCase();
+            
+            if (!cleanCode) {
+                showError('Por favor ingresa un código válido');
+                return;
+            }
+            
+            // Buscar en la base de datos
+            const videoData = videoDatabase[cleanCode];
+            
+            if (videoData) {
+                showResult(videoData.url, videoData.title, videoData.duration, videoData.difficulty);
+            } else {
+                // Si no está en la base de datos, crear URL genérica
+                const videoUrl = `https://smarttrainer.com/videos/${encodeURIComponent(cleanCode)}`;
+                showResult(videoUrl, `Entrenamiento Personalizado - ${cleanCode}`, '25 minutos', 'Personalizado');
+            }
+            
+            // Efecto de éxito en el input
+            manualCodeInput.style.borderColor = 'var(--amarillo)';
+        }
+
+        // Mostrar error
+        function showError(message) {
+            manualCodeInput.style.borderColor = 'var(--rojo)';
+            setTimeout(() => {
+                manualCodeInput.style.borderColor = '';
+            }, 2000);
+        }
+
+        // Event Listeners
+        submitManualBtn.addEventListener('click', () => {
+            processManualCode(manualCodeInput.value);
+        });
+        
+        manualCodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                processManualCode(manualCodeInput.value);
+            }
+        });
+
+        // Inicializar cuando la página cargue
+        window.addEventListener('load', initScanner);
+        
+        // Limpiar al salir
+        window.addEventListener('beforeunload', stopCamera);
+    </script>
+</body>
+</html>

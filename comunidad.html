@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunidad Fitness - Smart Trainer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/comunidad.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <!-- Header y Navegación -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">ST</div>
+                <div class="logo-text">Smart<span>Trainer</span></div>
+            </div>
+            <div class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="entrenamientos.html"><i class="fas fa-dumbbell"></i> Entrenamientos</a></li>
+                    <li><a href="nutricion.html"><i class="fas fa-apple-alt"></i> Nutrición</a></li>
+                    <li><a href="progreso.html"><i class="fas fa-chart-line"></i> Progreso</a></li>
+                    <li><a href="comunidad.html"><i class="fas fa-users"></i> Comunidad</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Comunidad <span>Fitness</span></h1>
+        <p>Encuentra todas las sucursales de 24/7 Fitness en Ensenada</p>
+    </section>
+
+    <!-- Estadísticas de la Comunidad -->
+    <section class="community-stats">
+        <div class="container">
+            <h2 class="section-title">24/7 Fitness Ensenada</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🏋️</div>
+                    <div class="stat-content">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">Sucursales</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏰</div>
+                    <div class="stat-content">
+                        <div class="stat-value">24/7</div>
+                        <div class="stat-label">Horario</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-content">
+                        <div class="stat-value">4.8</div>
+                        <div class="stat-label">Rating Promedio</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💪</div>
+                    <div class="stat-content">
+                        <div class="stat-value">500+</div>
+                        <div class="stat-label">Miembros</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mapa y Lista de Gimnasios -->
+    <section class="gym-section">
+        <div class="container">
+            <div class="gym-layout">
+                <!-- Mapa -->
+                <div class="map-container">
+                    <div class="map-header">
+                        <h2>
+                            <i class="fas fa-map-marker-alt"></i>
+                            Sucursales 24/7 Fitness
+                        </h2>
+                        <div class="map-controls">
+                            <button class="btn-secondary" id="locateMe">
+                                <i class="fas fa-location-arrow"></i>
+                                Mi Ubicación
+                            </button>
+                            <button class="btn-secondary" id="refreshMap">
+                                <i class="fas fa-sync"></i>
+                                Actualizar
+                            </button>
+                        </div>
+                    </div>
+                    <div id="gymMap"></div>
+                    <div class="map-stats">
+                        <div class="stat">
+                            <div class="stat-value" id="nearestGym">--</div>
+                            <div class="stat-label">Sucursal Más Cercana</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="distance">-- km</div>
+                            <div class="stat-label">Distancia</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Gimnasios -->
+                <div class="gym-list-container">
+                    <div class="gym-list-header">
+                        <h3>Sucursales Disponibles</h3>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="gymSearch" placeholder="Buscar sucursal...">
+                        </div>
+                    </div>
+                    <div class="gym-list" id="gymList">
+                        <!-- Los gimnasios se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Información de Sucursales -->
+    <section class="gym-details">
+        <div class="container">
+            <h2 class="section-title">Información de Sucursales</h2>
+            <div class="gym-cards" id="gymCards">
+                <!-- Las tarjetas de gimnasios se cargarán dinámicamente -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Smart<span>Trainer</span></div>
+            <p class="footer-text">Tu compañero inteligente para alcanzar tus metas fitness.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p class="copyright">© 2023 Smart Trainer. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/comunidad.js"></script>
+</body>
+</html>
